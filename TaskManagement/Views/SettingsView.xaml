@@ -1,0 +1,109 @@
+﻿<simpleChildWindow:ChildWindow x:Class="TaskManagement.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:simpleChildWindow="clr-namespace:MahApps.Metro.SimpleChildWindow;assembly=MahApps.Metro.SimpleChildWindow"
+             xmlns:cal="http://www.caliburnproject.org"
+             xmlns:pass="clr-namespace:TaskManagement"
+             xmlns:local="clr-namespace:TaskManagement.Data.Model;assembly=TaskManagement.Data"
+             xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls" IsOpen="{Binding IsSetttingsVisible}" Title="Settings" 
+             BorderBrush="{DynamicResource AccentBaseColorBrush}" GlowBrush="{DynamicResource AccentColorBrush}"
+             BorderThickness="1" AllowMove="True" ShowCloseButton="True" Grid.ColumnSpan="2">
+
+    <simpleChildWindow:ChildWindow.OverlayBrush>
+        <SolidColorBrush Opacity="0.5" Color="{StaticResource Gray2}" />
+    </simpleChildWindow:ChildWindow.OverlayBrush>
+
+    <simpleChildWindow:ChildWindow.Resources>
+
+        <Style TargetType="TextBox" x:Key="TextBoxReadOnly">
+            <Setter Property="Height" Value="26"/>
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="3"/>
+            <Setter Property="Background" Value="#f0f0f0"/>
+            <Setter Property="IsEnabled" Value="False"/>
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding ElementName=SqlServer, Path=IsChecked}" Value="true"/>
+                        <Condition Binding="{Binding ElementName=Authentication, Path=SelectedIndex}" Value="1"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="IsEnabled" Value="True"/>
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="PasswordBox">
+            <Setter Property="Height" Value="26"/>
+            <Setter Property="IsEnabled" Value="False"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="3"/>
+            <Setter Property="Background" Value="#f0f0f0"/>
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding ElementName=SqlServer, Path=IsChecked}" Value="true"/>
+                        <Condition Binding="{Binding ElementName=Authentication, Path=SelectedIndex}" Value="1"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="IsEnabled" Value="True"/>
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="ComboBox" x:Key="ComboBoxReadOnly" BasedOn="{StaticResource MetroComboBox}">
+            <Setter Property="IsEnabled" Value="False"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=SqlServer, Path=IsChecked}" Value="true">
+                    <Setter Property="IsEnabled" Value="True"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+    </simpleChildWindow:ChildWindow.Resources>
+
+    <Grid Margin="40">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,30" Orientation="Horizontal">
+            <TextBlock Text="How often i should notify you(Minutes) ?"/>
+            <TextBox Margin="30,0,0,0" Name="NotifyTime" Width="50"/>
+        </StackPanel>
+
+        <StackPanel  Grid.Row="1" Grid.Column="0" Margin="0,0,30,0">
+            <TextBlock Text="Please select any Database" Margin="0,0,0,30"/>
+            <RadioButton Style="{StaticResource SettingsRadioButton}" IsChecked="{Binding Path=Connection.DatabaseType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static local:DatabaseType.Json}}" Content="Json"/>
+            <RadioButton Style="{StaticResource SettingsRadioButton}" IsChecked="{Binding Path=Connection.DatabaseType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static local:DatabaseType.SqlLite}}" Content="SQL Lite"/>
+            <RadioButton Name="SqlServer" Style="{StaticResource SettingsRadioButton}" IsChecked="{Binding Path=Connection.DatabaseType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static local:DatabaseType.SqlServer}}" Content="SQL Server"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.Column="1">
+
+            <TextBlock Text="File Name" Margin="0,0,0,10"/>
+            <TextBox Text="{Binding Connection.FileName}"/>
+            <TextBlock Text="Authentication Type" Style="{StaticResource SettingsItemsName}"/>
+            <ComboBox Name="Authentication" SelectedItem="{Binding Connection.AuthenticationType}" ItemsSource="{Binding Source={StaticResource AuthenticationTypes}}" Style="{StaticResource ComboBoxReadOnly}"/>
+            <TextBlock Text="User Name" Style="{StaticResource SettingsItemsName}"/>
+            <TextBox Text="{Binding Connection.UserName}" Style="{StaticResource TextBoxReadOnly}"/>
+            <TextBlock Text="Password" Style="{StaticResource SettingsItemsName}"/>
+            <!--<TextBox Text="{Binding Connection.Password}" Style="{StaticResource TextBoxReadOnly}"/>-->
+            <PasswordBox pass:PasswordHelper.Attach="True" pass:PasswordHelper.Password="{Binding Path=Connection.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            </PasswordBox>
+        </StackPanel>
+
+        <Controls:ProgressRing Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource AccentColorBrush}" IsActive="{Binding IsProcessRingActive}"/>
+
+        <Button Grid.Row="2" Grid.ColumnSpan="2" Content="Ok" HorizontalAlignment="Right" Background="#16a05d" Foreground="White" BorderThickness="1" BorderBrush="Black" cal:Message.Attach="SetConnection" Margin="0,20,0,0"/>
+    </Grid>
+</simpleChildWindow:ChildWindow>
