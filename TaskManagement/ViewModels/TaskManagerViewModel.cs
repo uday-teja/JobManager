@@ -181,7 +181,7 @@ namespace TaskManagement.ViewModels
 
         public void LoadTasks()
         {
-            RawJobs = Mapper.Map<List<Job>>(JobService.GetAll());
+            RawJobs = JobService.GetAll();
             NewJobs = GetTasks("New");
             JobsInProgress = GetTasks("In Progress");
             JobsCompleted = GetTasks("Completed");
@@ -189,7 +189,7 @@ namespace TaskManagement.ViewModels
 
         private BindableCollection<Job> GetTasks(string status)
         {
-            return new BindableCollection<Job>(RawJobs.Where(t => t.Status == status).Take(Helper.Constants.TotalTasks));
+            return new BindableCollection<Job>(RawJobs.Where(t => t.Status == status));
         }
 
         public void TasksArcheiveView()
@@ -339,6 +339,20 @@ namespace TaskManagement.ViewModels
             {
                 DeleteTask(SelectedJob);
             }
+        }
+
+        public void StartTimer()
+        {
+            this.SelectedJob.Stopwatch = new System.Diagnostics.Stopwatch();
+            this.SelectedJob.Stopwatch.Start();
+        }
+
+        public void StopTimer()
+        {
+            this.SelectedJob.Stopwatch.Stop();
+            TimeSpan ts = this.SelectedJob.Stopwatch.Elapsed;
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
+            this.SelectedJob.TotalTime = elapsedTime;
         }
 
         public void Handle(IJobService message)

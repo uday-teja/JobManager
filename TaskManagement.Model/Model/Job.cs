@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -163,6 +164,18 @@ namespace TaskManagement.Model.Model
             {
                 status = value;
                 NotifyOfPropertyChange(() => Status);
+            }
+        }
+
+        private Stopwatch stopwatch;
+
+        public Stopwatch Stopwatch
+        {
+            get { return stopwatch; }
+            set
+            {
+                stopwatch = value;
+                NotifyOfPropertyChange(() => Stopwatch);
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Sheets.v4;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace TaskManagement.Data.Service
 
         public List<Job> GetAll()
         {
-            var range = $"{Sheet}!A:F";
+            var range = $"{Sheet}!A:M";
             SpreadsheetsResource.ValuesResource.GetRequest request =
                     SheetsService.Spreadsheets.Values.Get(SpreadSheetId, range);
 
@@ -66,12 +67,45 @@ namespace TaskManagement.Data.Service
             if (values != null && values.Count > 0)
             {
 
-                return values.Cast<Job>().ToList();
+                return values.Select(CreateJob).ToList();
             }
             else
             {
                 return new List<Job>();
             }
+        }
+
+        public Job CreateJob(object obj)
+        {
+            var jobList = (IList)obj;
+            Job job = new Job();
+            if (jobList.Count > 1)
+                job.JobId = jobList[0]?.ToString();
+            if (jobList.Count > 2)
+                job.MachineType = jobList[1]?.ToString();
+            if (jobList.Count > 3)
+                job.Month = jobList[2]?.ToString();
+            if (jobList.Count > 4)
+                job.CompanyName = jobList[3]?.ToString();
+            if (jobList.Count > 5)
+                job.JobDetails = jobList[4]?.ToString();
+            if (jobList.Count > 6)
+                job.Description = jobList[5]?.ToString();
+            if (jobList.Count > 7)
+                job.InDate = jobList[6]?.ToString();
+            if (jobList.Count > 8)
+                job.ExpectedCompletionDate = jobList[7]?.ToString();
+            if (jobList.Count > 9)
+                job.ActualCompletionDate = jobList[8]?.ToString();
+            if (jobList.Count > 10)
+                job.Status = jobList[9]?.ToString();
+            if (jobList.Count > 11)
+                job.StartTime = jobList[10]?.ToString();
+            if (jobList.Count > 12)
+                job.EndTime = jobList[11]?.ToString();
+            if (jobList.Count > 13)
+                job.TotalTime = jobList[12]?.ToString();
+            return job;
         }
 
         public void Update(Job job)

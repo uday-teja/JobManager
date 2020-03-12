@@ -10,7 +10,6 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-
     <UserControl.Resources>
 
         <Style TargetType="ListView">
@@ -59,10 +58,10 @@
         </Style>-->
 
         <Style TargetType="TextBlock" x:Key="TaskTime">
-            <Setter Property="TextBlock.Text" Value="{Binding DueDate, StringFormat={}{0:ddd, MMM dd, yyy.  HH:mm tt}}" />
+            <Setter Property="TextBlock.Text" Value="{Binding ExpectedCompletionDate, StringFormat={}{0:ddd, MMM dd, yyy.  HH:mm tt}}" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Status}" Value="Completed">
-                    <Setter Property="TextBlock.Text" Value="{Binding CompletedDate, StringFormat={}{0:ddd, MMM,dd, yyy.  HH:mm tt}}" />
+                    <Setter Property="TextBlock.Text" Value="{Binding ActualCompletionDate, StringFormat={}{0:ddd, MMM,dd, yyy.  HH:mm tt}}" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -109,6 +108,7 @@
                     <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5"/>
@@ -127,9 +127,10 @@
                     </StackPanel>
                 </Border>
 
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Margin="5" FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" Panel.ZIndex="1"/>
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Description}" Margin="5" TextWrapping="Wrap"/>
-                <StackPanel Grid.Row="2" Grid.Column="1" Margin="5">
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding JobDetails}" Margin="5" FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" Panel.ZIndex="1"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Description}" Margin="5" FontSize="14" TextWrapping="Wrap" Panel.ZIndex="1"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CompanyName}" Margin="5" TextWrapping="Wrap"/>
+                <StackPanel Grid.Row="3" Grid.Column="1" Margin="5">
                     <!--<TextBlock Text="">
                         <Run Text="Started on: "/>
                         <TextBlock Style="{StaticResource StartDate}"/>
@@ -138,6 +139,10 @@
                         <TextBlock Style="{StaticResource  DateDescription}"/>
                         <TextBlock Style="{StaticResource TaskTime}" TextWrapping="Wrap"  />
                         <!--<TextBlock Margin="10,0,0,0" Text="Late" Foreground="{Binding Path=DueDate, Converter={StaticResource DueDateConcerter}}"/>-->
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center"  HorizontalAlignment="Right" Margin="5,-2,5,5" Panel.ZIndex="3" Cursor="Hand">
+                            <Image Source="pack://application:,,,/Images/play.png" Height="20" Width="20" Margin="0,0,10,0" cal:Message.Attach="[Event MouseUp] = [Action StartTimer]"/>
+                            <Image Source="pack://application:,,,/Images/stop.png" Height="20" Width="20" Margin="0,0,5,0" cal:Message.Attach="[Event MouseUp] = [Action StopTimer]"/>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
             </Grid>
@@ -220,15 +225,15 @@
         </StackPanel>
 
         <TextBlock Text="NEW" FontSize="14" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" Style="{StaticResource PrimaryStyle}"/>
-        <ListView Grid.Column="0" Grid.Row="2" BorderThickness="0" ItemTemplate="{StaticResource ListViewDataTemplate}" x:Name="NewTasks" 
-                  SelectedItem="{Binding SelectedTask}"/>
+        <ListView Grid.Column="0" Grid.Row="2" BorderThickness="0" ItemTemplate="{StaticResource ListViewDataTemplate}" x:Name="NewJobs" 
+                  SelectedItem="{Binding SelectedJob}"/>
 
         <TextBlock Text="IN PROGRESS" FontSize="14" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" Style="{StaticResource PrimaryStyle}"/>
-        <ListView Grid.Column="1" Grid.Row="2" BorderThickness="1,0,1,0" ItemTemplate="{StaticResource ListViewDataTemplate}" x:Name="TasksInProgress"
-                  SelectedItem="{Binding SelectedTask}"/>
+        <ListView Grid.Column="1" Grid.Row="2" BorderThickness="1,0,1,0" ItemTemplate="{StaticResource ListViewDataTemplate}" x:Name="JobsInProgress"
+                  SelectedItem="{Binding SelectedJob}"/>
 
         <TextBlock Text="COMPLETED" FontSize="14" VerticalAlignment="Center" Grid.Column="2" Grid.Row="1" Style="{StaticResource PrimaryStyle}"/>
-        <ListView Grid.Column="2" Grid.Row="2" BorderThickness="0" ItemTemplate="{StaticResource ListViewDataTemplate}" x:Name="TasksCompleted"
-                  SelectedItem="{Binding SelectedTask}"/>
+        <ListView Grid.Column="2" Grid.Row="2" BorderThickness="0" ItemTemplate="{StaticResource ListViewDataTemplate}" x:Name="JobsCompleted"
+                  SelectedItem="{Binding SelectedJob}"/>
     </Grid>
 </UserControl>
